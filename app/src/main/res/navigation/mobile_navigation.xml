@@ -19,7 +19,7 @@
 
     <fragment
         android:id="@+id/navigation_notifications"
-        android:name="android.tugas.easycook.ui.notifications.NotificationsFragment"
+        android:name="android.tugas.easycook.ui.search.SearchFragment"
         android:label="@string/title_notifications"
         tools:layout="@layout/fragment_notifications" />
 </navigation>
