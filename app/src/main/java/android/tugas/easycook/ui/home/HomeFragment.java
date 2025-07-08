@@ -45,9 +45,9 @@ public class HomeFragment extends Fragment {
     private void setupRecommendedRecyclerView() {
         // 1. data palsu (dummy data)
         List<Recipe> recommendedList = new ArrayList<>();
-        recommendedList.add(new Recipe("Zucchini Noodles", "20 minutes", "180 kcal", R.drawable.ic_beverages));
-        recommendedList.add(new Recipe("Chickpea Curry", "15 minutes", "200 kcal", R.drawable.ic_beverages));
-        recommendedList.add(new Recipe("Tiramisu", "10 minutes", "350 kcal", R.drawable.ic_beverages));
+        recommendedList.add(new Recipe("Zucchini Noodles", "20 minutes", "180 kcal", R.drawable.ic_beverages, "Typically served with curly noodles, savory broth, chashu pork, nori, and a soft-boiled egg."));
+        recommendedList.add(new Recipe("Chickpea Curry", "15 minutes", "200 kcal", R.drawable.ic_beverages, "Typically served with curly noodles, savory broth, chashu pork, nori, and a soft-boiled egg."));
+        recommendedList.add(new Recipe("Tiramisu", "10 minutes", "350 kcal", R.drawable.ic_beverages, "Typically served with curly noodles, savory broth, chashu pork, nori, and a soft-boiled egg."));
 
         // 2. Adapter
         RecommendedAdapter adapter = new RecommendedAdapter(recommendedList);
@@ -63,10 +63,10 @@ public class HomeFragment extends Fragment {
     private void setupPopularRecyclerView() {
         // 1. data palsu
         List<Recipe> popularList = new ArrayList<>();
-        popularList.add(new Recipe("Mocktail", "5 minutes", "10 kcal", R.drawable.ic_beverages));
-        popularList.add(new Recipe("Lasagna", "45 minutes", "74 kcal", R.drawable.ic_beverages));
-        popularList.add(new Recipe("Risotto", "8 minutes", "90 kcal", R.drawable.ic_beverages));
-        popularList.add(new Recipe("Pancake", "12 minutes", "150 kcal", R.drawable.ic_beverages));
+        popularList.add(new Recipe("Mocktail", "5 minutes", "10 kcal", R.drawable.ic_beverages, "It's savory, hearty, and often served with toppings like sweet corn, bean sprouts, ground meat, and butter.\""));
+        popularList.add(new Recipe("Lasagna", "45 minutes", "74 kcal", R.drawable.ic_beverages, "It's savory, hearty, and often served with toppings like sweet corn, bean sprouts, ground meat, and butter."));
+        popularList.add(new Recipe("Risotto", "8 minutes", "90 kcal", R.drawable.ic_beverages, "It's savory, hearty, and often served with toppings like sweet corn, bean sprouts, ground meat, and butter."));
+        popularList.add(new Recipe("Pancake", "12 minutes", "150 kcal", R.drawable.ic_beverages, "It's savory, hearty, and often served with toppings like sweet corn, bean sprouts, ground meat, and butter."));
 
         // 2.  Adapter
         PopularAdapter adapter = new PopularAdapter(popularList);
