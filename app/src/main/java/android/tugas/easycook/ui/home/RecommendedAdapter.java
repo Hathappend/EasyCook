@@ -1,25 +1,30 @@
 package android.tugas.easycook.ui.home;
 
 import android.tugas.easycook.data.model.Recipe;
+import android.tugas.easycook.databinding.HomeItemRecommendedRecipeBinding;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-import android.tugas.easycook.databinding.HomeItemRecommendedRecipeBinding;
 import java.util.List;
 
 public class RecommendedAdapter extends RecyclerView.Adapter<RecommendedAdapter.RecipeViewHolder> {
 
     private final List<Recipe> recipeList;
+    private final OnItemClickListener listener;
 
-    public RecommendedAdapter(List<Recipe> recipeList) {
+    public interface OnItemClickListener {
+        void onItemClick(int recipeId);
+    }
+
+    public RecommendedAdapter(List<Recipe> recipeList, OnItemClickListener listener) {
         this.recipeList = recipeList;
+        this.listener = listener;
     }
 
     @NonNull
     @Override
     public RecipeViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        // binding untuk inflate layout
         HomeItemRecommendedRecipeBinding binding = HomeItemRecommendedRecipeBinding.inflate(
                 LayoutInflater.from(parent.getContext()), parent, false);
         return new RecipeViewHolder(binding);
@@ -28,7 +33,7 @@ public class RecommendedAdapter extends RecyclerView.Adapter<RecommendedAdapter.
     @Override
     public void onBindViewHolder(@NonNull RecipeViewHolder holder, int position) {
         Recipe recipe = recipeList.get(position);
-        holder.bind(recipe);
+        holder.bind(recipe, listener);
     }
 
     @Override
@@ -44,11 +49,14 @@ public class RecommendedAdapter extends RecyclerView.Adapter<RecommendedAdapter.
             this.binding = binding;
         }
 
-        public void bind(Recipe recipe) {
+        public void bind(final Recipe recipe, final OnItemClickListener listener) {
             binding.tvNameRecommended.setText(recipe.getName());
             binding.tvTimeRecommended.setText(recipe.getTime());
-//            binding.tvalories.setText(recipe.getCalories());
-//            binding.recipeImage.setImageResource(recipe.getImage());
+
+//            binding.tvCaloriesRecommended.setText(recipe.getCalories());
+            binding.recipeImage.setImageResource(recipe.getImage());
+
+            itemView.setOnClickListener(v -> listener.onItemClick(recipe.getId()));
         }
     }
 }

@@ -50,10 +50,10 @@ public class SearchFragment extends Fragment {
     private void loadDummyData() {
         // Buat daftar resep palsu
         List<Recipe> dummyList = new ArrayList<>();
-        dummyList.add(new Recipe("Shoyu Ramen", "9 minutes", "90 kcal", R.drawable.ic_beverages, "Typically served with curly noodles, savory broth, chashu pork, nori, and a soft-boiled egg."));
-        dummyList.add(new Recipe("Tonkotsu Ramen", "7 minutes", "60 kcal", R.drawable.ic_beverages, "It's deeply flavorful, thick, and often served with thin straight noodles, sesame pork, black garlic oil, and a soft-boiled egg."));
-        dummyList.add(new Recipe("Shio Ramen", "8 minutes", "90 kcal", R.drawable.ic_beverages, "It has a delicate, clean flavor and is usually paired with thin straight noodles, chashu pork, green onions, boiled egg, and seaweed."));
-        dummyList.add(new Recipe("Miso Ramen", "10 minutes", "100 kcal", R.drawable.ic_beverages, "It's savory, hearty, and often served with toppings like sweet corn, bean sprouts, ground meat, and butter."));
+        dummyList.add(new Recipe(555555,"Shoyu Ramen", "9 minutes", "90 kcal", R.drawable.ic_beverages, "Typically served with curly noodles, savory broth, chashu pork, nori, and a soft-boiled egg."));
+        dummyList.add(new Recipe(666666,"Tonkotsu Ramen", "7 minutes", "60 kcal", R.drawable.ic_beverages, "It's deeply flavorful, thick, and often served with thin straight noodles, sesame pork, black garlic oil, and a soft-boiled egg."));
+        dummyList.add(new Recipe(777777,"Shio Ramen", "8 minutes", "90 kcal", R.drawable.ic_beverages, "It has a delicate, clean flavor and is usually paired with thin straight noodles, chashu pork, green onions, boiled egg, and seaweed."));
+        dummyList.add(new Recipe(888888,"Miso Ramen", "10 minutes", "100 kcal", R.drawable.ic_beverages, "It's savory, hearty, and often served with toppings like sweet corn, bean sprouts, ground meat, and butter."));
 
         // Perbarui adapter dengan data baru
         SearchAdapter adapter = (SearchAdapter) binding.rvSearchResults.getAdapter();

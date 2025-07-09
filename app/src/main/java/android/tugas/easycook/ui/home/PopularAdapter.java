@@ -1,20 +1,27 @@
 package android.tugas.easycook.ui.home;
 
-// File: PopularAdapter.java
+import android.tugas.easycook.data.model.Recipe;
+import android.tugas.easycook.databinding.HomeItemPopularRecipeBinding;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-import android.tugas.easycook.data.model.Recipe;
-import android.tugas.easycook.databinding.HomeItemPopularRecipeBinding;
 import java.util.List;
 
 public class PopularAdapter extends RecyclerView.Adapter<PopularAdapter.RecipeViewHolder> {
 
     private final List<Recipe> recipeList;
+    private final OnItemClickListener listener;
 
-    public PopularAdapter(List<Recipe> recipeList) {
+    // 1. Definisikan Interface untuk click listener
+    public interface OnItemClickListener {
+        void onItemClick(int recipeId);
+    }
+
+    // 2. Perbarui Constructor untuk menerima listener
+    public PopularAdapter(List<Recipe> recipeList, OnItemClickListener listener) {
         this.recipeList = recipeList;
+        this.listener = listener;
     }
 
     @NonNull
@@ -28,7 +35,8 @@ public class PopularAdapter extends RecyclerView.Adapter<PopularAdapter.RecipeVi
     @Override
     public void onBindViewHolder(@NonNull RecipeViewHolder holder, int position) {
         Recipe recipe = recipeList.get(position);
-        holder.bind(recipe);
+        // 3. Kirim resep dan listener ke ViewHolder
+        holder.bind(recipe, listener);
     }
 
     @Override
@@ -44,11 +52,15 @@ public class PopularAdapter extends RecyclerView.Adapter<PopularAdapter.RecipeVi
             this.binding = binding;
         }
 
-        public void bind(Recipe recipe) {
+        // 4. Method bind sekarang juga menerima listener
+        public void bind(final Recipe recipe, final OnItemClickListener listener) {
             binding.tvNamePopular.setText(recipe.getName());
             binding.tvTimePopular.setText(recipe.getTime());
 //            binding.tvCaloriesPopular.setText(recipe.getCalories());
-//            binding.ivRecipePopular.setImageResource(recipe.getImage());
+//            binding.ivRecipeImage.setImageResource(recipe.getImage());
+
+            // 5. Set OnClickListener pada seluruh item view
+            itemView.setOnClickListener(v -> listener.onItemClick(recipe.getId()));
         }
     }
 }
