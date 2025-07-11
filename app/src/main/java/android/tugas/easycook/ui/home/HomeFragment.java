@@ -9,12 +9,16 @@ import android.tugas.easycook.ui.detail.RecipeDetailActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.navigation.Navigation;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,6 +42,25 @@ public class HomeFragment extends Fragment {
 
         setupRecommendedRecyclerView();
         setupPopularRecyclerView();
+        setupSearchListener();
+    }
+
+    private void setupSearchListener() {
+        binding.etSearchHome.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                // 1. Ambil teks pencarian
+                String query = binding.etSearchHome.getText().toString().trim();
+                if (!query.isEmpty()) {
+                    // 2. Siapkan bundle untuk mengirim data
+                    Bundle bundle = new Bundle();
+                    bundle.putString("search_query", query);
+
+                    Navigation.findNavController(v).navigate(R.id.action_home_to_search, bundle);
+                }
+                return true;
+            }
+            return false;
+        });
     }
 
     private void setupRecommendedRecyclerView() {

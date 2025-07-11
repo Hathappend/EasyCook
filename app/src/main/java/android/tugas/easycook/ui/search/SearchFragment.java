@@ -8,7 +8,7 @@ import android.tugas.easycook.data.model.Recipe;
 import android.tugas.easycook.data.response.SearchApiResponse;
 import android.tugas.easycook.databinding.FragmentSearchBinding;
 import android.tugas.easycook.ui.detail.RecipeDetailActivity;
-import android.util.Log; // Pastikan import ini ada
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,7 +29,6 @@ import retrofit2.Response;
 
 public class SearchFragment extends Fragment {
 
-    // TAG untuk Logcat, agar mudah difilter
     private static final String TAG = "SearchDebug";
 
     private FragmentSearchBinding binding;
@@ -42,7 +41,6 @@ public class SearchFragment extends Fragment {
     private int totalResults = 0;
     private static final int PAGE_SIZE = 10;
 
-    // GANTI DENGAN API KEY ANDA
     private final String API_KEY = "9135788718664371a9de785a0ed83a7d";
 
     @Override
@@ -58,6 +56,20 @@ public class SearchFragment extends Fragment {
         apiService = ApiClient.getClient().create(ApiService.class);
         setupRecyclerView();
         setupSearchListener();
+
+        if (getArguments() != null) {
+            String queryFromHome = getArguments().getString("search_query");
+            if (queryFromHome != null && !queryFromHome.isEmpty()) {
+                binding.etSearch.setText(queryFromHome);
+                // Langsung lakukan pencarian
+                currentQuery = queryFromHome;
+                currentOffset = 0;
+                totalResults = 0;
+                searchAdapter.showFooter(false);
+                searchAdapter.clear();
+                performSearch();
+            }
+        }
     }
 
     private void setupRecyclerView() {
@@ -100,7 +112,6 @@ public class SearchFragment extends Fragment {
 
         isLoading = true;
 
-        // LOG 1: Menampilkan query dan offset yang dikirim ke API
         Log.d(TAG, "--> Melakukan pencarian untuk: '" + currentQuery + "', offset: " + currentOffset);
 
         Call<SearchApiResponse> call = apiService.searchRecipes(API_KEY, currentQuery, true, PAGE_SIZE, currentOffset);
@@ -109,27 +120,23 @@ public class SearchFragment extends Fragment {
             public void onResponse(@NonNull Call<SearchApiResponse> call, @NonNull Response<SearchApiResponse> response) {
                 isLoading = false;
 
-                // LOG 2: Menampilkan status respons dari API
+                // Menampilkan status respons dari API
                 Log.d(TAG, "Respons diterima. Kode: " + response.code());
 
                 if (response.isSuccessful() && response.body() != null) {
                     if (currentOffset == 0) {
                         totalResults = response.body().getTotalResults();
-                        // LOG 3: Menampilkan total hasil yang didapat dari API
                         Log.d(TAG, "PANGGILAN PERTAMA. Total hasil dari API: " + totalResults);
                     }
 
                     List<Recipe> recipes = response.body().getResults();
                     int receivedCount = (recipes != null) ? recipes.size() : 0;
-                    // LOG 4: Menampilkan jumlah resep yang diterima di halaman ini
                     Log.d(TAG, "Jumlah resep yang diterima: " + receivedCount);
 
                     if (receivedCount > 0) {
                         searchAdapter.addRecipes(recipes);
                         currentOffset += receivedCount;
                         Log.d(TAG, "Offset sekarang menjadi: " + currentOffset);
-
-                        // LOG 5: Menampilkan perbandingan untuk logika tombol "Show More"
                         Log.d(TAG, "Pengecekan: apakah offset (" + currentOffset + ") < totalResults (" + totalResults + ")?");
 
                         if (currentOffset < totalResults) {
@@ -157,7 +164,6 @@ public class SearchFragment extends Fragment {
             public void onFailure(@NonNull Call<SearchApiResponse> call, @NonNull Throwable t) {
                 isLoading = false;
                 searchAdapter.showFooter(false);
-                // LOG 6: Menampilkan jika terjadi error jaringan
                 Log.e(TAG, "Panggilan API GAGAL: ", t);
                 Toast.makeText(getContext(), "Network Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
