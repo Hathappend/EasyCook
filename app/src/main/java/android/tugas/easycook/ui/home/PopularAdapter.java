@@ -54,8 +54,8 @@ public class PopularAdapter extends RecyclerView.Adapter<PopularAdapter.RecipeVi
 
         // 4. Method bind sekarang juga menerima listener
         public void bind(final Recipe recipe, final OnItemClickListener listener) {
-            binding.tvNamePopular.setText(recipe.getName());
-            binding.tvTimePopular.setText(recipe.getTime());
+//            binding.tvNamePopular.setText(recipe.getName());
+//            binding.tvTimePopular.setText(recipe.getTime());
 //            binding.tvCaloriesPopular.setText(recipe.getCalories());
 //            binding.ivRecipeImage.setImageResource(recipe.getImage());
 

@@ -50,11 +50,11 @@ public class RecommendedAdapter extends RecyclerView.Adapter<RecommendedAdapter.
         }
 
         public void bind(final Recipe recipe, final OnItemClickListener listener) {
-            binding.tvNameRecommended.setText(recipe.getName());
-            binding.tvTimeRecommended.setText(recipe.getTime());
+//            binding.tvNameRecommended.setText(recipe.getName());
+//            binding.tvTimeRecommended.setText(recipe.getTime());
 
 //            binding.tvCaloriesRecommended.setText(recipe.getCalories());
-            binding.recipeImage.setImageResource(recipe.getImage());
+//            binding.recipeImage.setImageResource(recipe.getImage());
 
             itemView.setOnClickListener(v -> listener.onItemClick(recipe.getId()));
         }

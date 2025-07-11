@@ -1,9 +1,14 @@
 package android.tugas.easycook.ui.search;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.tugas.easycook.R;
+import android.tugas.easycook.data.api.ApiClient;
+import android.tugas.easycook.data.api.ApiService;
 import android.tugas.easycook.data.model.Recipe;
+import android.tugas.easycook.data.response.SearchApiResponse;
 import android.tugas.easycook.databinding.FragmentSearchBinding;
+import android.tugas.easycook.ui.detail.RecipeDetailActivity;
+import android.util.Log; // Pastikan import ini ada
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,9 +23,27 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import java.util.ArrayList;
 import java.util.List;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class SearchFragment extends Fragment {
 
+    // TAG untuk Logcat, agar mudah difilter
+    private static final String TAG = "SearchDebug";
+
     private FragmentSearchBinding binding;
+    private SearchAdapter searchAdapter;
+    private ApiService apiService;
+
+    private boolean isLoading = false;
+    private String currentQuery = "";
+    private int currentOffset = 0;
+    private int totalResults = 0;
+    private static final int PAGE_SIZE = 10;
+
+    // GANTI DENGAN API KEY ANDA
+    private final String API_KEY = "9135788718664371a9de785a0ed83a7d";
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -32,51 +55,112 @@ public class SearchFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
+        apiService = ApiClient.getClient().create(ApiService.class);
         setupRecyclerView();
         setupSearchListener();
     }
 
     private void setupRecyclerView() {
-        // 1. Buat Adapter dengan list kosong
-        SearchAdapter adapter = new SearchAdapter(new ArrayList<>());
+        searchAdapter = new SearchAdapter(new ArrayList<>(),
+                recipeId -> {
+                    Intent intent = new Intent(getActivity(), RecipeDetailActivity.class);
+                    intent.putExtra("RECIPE_ID", recipeId);
+                    startActivity(intent);
+                },
+                () -> {
+                    if (!isLoading) {
+                        performSearch();
+                    }
+                }
+        );
         binding.rvSearchResults.setLayoutManager(new LinearLayoutManager(getContext()));
-        binding.rvSearchResults.setAdapter(adapter);
-
-        // 2. Muat data dummy untuk tampilan awal
-        loadDummyData();
-    }
-
-    private void loadDummyData() {
-        // Buat daftar resep palsu
-        List<Recipe> dummyList = new ArrayList<>();
-        dummyList.add(new Recipe(555555,"Shoyu Ramen", "9 minutes", "90 kcal", R.drawable.ic_beverages, "Typically served with curly noodles, savory broth, chashu pork, nori, and a soft-boiled egg."));
-        dummyList.add(new Recipe(666666,"Tonkotsu Ramen", "7 minutes", "60 kcal", R.drawable.ic_beverages, "It's deeply flavorful, thick, and often served with thin straight noodles, sesame pork, black garlic oil, and a soft-boiled egg."));
-        dummyList.add(new Recipe(777777,"Shio Ramen", "8 minutes", "90 kcal", R.drawable.ic_beverages, "It has a delicate, clean flavor and is usually paired with thin straight noodles, chashu pork, green onions, boiled egg, and seaweed."));
-        dummyList.add(new Recipe(888888,"Miso Ramen", "10 minutes", "100 kcal", R.drawable.ic_beverages, "It's savory, hearty, and often served with toppings like sweet corn, bean sprouts, ground meat, and butter."));
-
-        // Perbarui adapter dengan data baru
-        SearchAdapter adapter = (SearchAdapter) binding.rvSearchResults.getAdapter();
-        if (adapter != null) {
-            adapter.recipeList.clear();
-            adapter.recipeList.addAll(dummyList);
-            adapter.notifyDataSetChanged();
-        }
+        binding.rvSearchResults.setAdapter(searchAdapter);
     }
 
     private void setupSearchListener() {
         binding.etSearch.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                // Ambil teks pencarian
                 String query = binding.etSearch.getText().toString().trim();
                 if (!query.isEmpty()) {
-                    // Tampilkan Toast sebagai placeholder panggilan API
-                    Toast.makeText(getContext(), "Searching for: " + query, Toast.LENGTH_SHORT).show();
-
+                    currentQuery = query;
+                    currentOffset = 0;
+                    totalResults = 0;
+                    searchAdapter.showFooter(false);
+                    searchAdapter.clear();
+                    performSearch();
                 }
                 return true;
             }
             return false;
+        });
+    }
+
+    private void performSearch() {
+        if (currentQuery.isEmpty() || isLoading) return;
+
+        isLoading = true;
+
+        // LOG 1: Menampilkan query dan offset yang dikirim ke API
+        Log.d(TAG, "--> Melakukan pencarian untuk: '" + currentQuery + "', offset: " + currentOffset);
+
+        Call<SearchApiResponse> call = apiService.searchRecipes(API_KEY, currentQuery, true, PAGE_SIZE, currentOffset);
+        call.enqueue(new Callback<SearchApiResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<SearchApiResponse> call, @NonNull Response<SearchApiResponse> response) {
+                isLoading = false;
+
+                // LOG 2: Menampilkan status respons dari API
+                Log.d(TAG, "Respons diterima. Kode: " + response.code());
+
+                if (response.isSuccessful() && response.body() != null) {
+                    if (currentOffset == 0) {
+                        totalResults = response.body().getTotalResults();
+                        // LOG 3: Menampilkan total hasil yang didapat dari API
+                        Log.d(TAG, "PANGGILAN PERTAMA. Total hasil dari API: " + totalResults);
+                    }
+
+                    List<Recipe> recipes = response.body().getResults();
+                    int receivedCount = (recipes != null) ? recipes.size() : 0;
+                    // LOG 4: Menampilkan jumlah resep yang diterima di halaman ini
+                    Log.d(TAG, "Jumlah resep yang diterima: " + receivedCount);
+
+                    if (receivedCount > 0) {
+                        searchAdapter.addRecipes(recipes);
+                        currentOffset += receivedCount;
+                        Log.d(TAG, "Offset sekarang menjadi: " + currentOffset);
+
+                        // LOG 5: Menampilkan perbandingan untuk logika tombol "Show More"
+                        Log.d(TAG, "Pengecekan: apakah offset (" + currentOffset + ") < totalResults (" + totalResults + ")?");
+
+                        if (currentOffset < totalResults) {
+                            searchAdapter.showFooter(true);
+                            Log.d(TAG, "--> HASIL: Benar. Menampilkan footer 'Show More'.");
+                        } else {
+                            searchAdapter.showFooter(false);
+                            Log.d(TAG, "--> HASIL: Salah. Menyembunyikan footer 'Show More'.");
+                        }
+                    } else {
+                        searchAdapter.showFooter(false);
+                        Log.d(TAG, "Tidak ada resep diterima, sembunyikan footer.");
+                        if (currentOffset == 0) {
+                            Toast.makeText(getContext(), "No recipes found", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                } else {
+                    searchAdapter.showFooter(false);
+                    Toast.makeText(getContext(), "API Error: " + response.code(), Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, "Respons API tidak sukses atau body null.");
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<SearchApiResponse> call, @NonNull Throwable t) {
+                isLoading = false;
+                searchAdapter.showFooter(false);
+                // LOG 6: Menampilkan jika terjadi error jaringan
+                Log.e(TAG, "Panggilan API GAGAL: ", t);
+                Toast.makeText(getContext(), "Network Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
         });
     }
 

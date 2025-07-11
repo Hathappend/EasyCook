@@ -1,39 +1,60 @@
 package android.tugas.easycook.data.model;
 
+import com.google.gson.annotations.SerializedName;
+
 public class Recipe {
+
+    // Menggunakan @SerializedName agar nama field di Java bisa berbeda dari nama field di JSON
+    @SerializedName("id")
     private int id;
-    private String name;
-    private String time;
-    private String calories;
-    private int image;
-    private String description;
 
-    public Recipe(int id, String name, String time, String calories, int image, String description) {
-        this.id = id;
-        this.name = name;
-        this.time = time;
-        this.calories = calories;
-        this.image = image;
-        this.description = description;
+    @SerializedName("title")
+    private String title; // API mengembalikan 'title', bukan 'name'
+
+    @SerializedName("image")
+    private String imageUrl; // API mengembalikan URL gambar (String)
+
+    @SerializedName("readyInMinutes")
+    private int readyInMinutes; // API mengembalikan 'readyInMinutes'
+
+    @SerializedName("summary")
+    private String summary; // Deskripsi dari API
+
+    // FIELD BARU DITAMBAHKAN
+    @SerializedName("spoonacularScore")
+    private double spoonacularScore;
+
+    @SerializedName("healthScore")
+    private double healthScore;
+
+
+    // Getter methods
+    public int getId() {
+        return id;
     }
 
-    public int getId() { return id; }
-
-    public String getName() {
-        return name;
+    public String getTitle() {
+        return title;
     }
 
-    public String getTime() {
-        return time;
+    public String getImageUrl() {
+        return imageUrl;
     }
 
-    public String getCalories() {
-        return calories;
+    public int getReadyInMinutes() {
+        return readyInMinutes;
     }
 
-    public int getImage() {
-        return image;
+    public String getSummary() {
+        return summary;
     }
 
-    public String getDescription() { return description; }
+    // GETTER BARU DITAMBAHKAN
+    public double getSpoonacularScore() {
+        return spoonacularScore;
+    }
+
+    public double getHealthScore() {
+        return healthScore;
+    }
 }

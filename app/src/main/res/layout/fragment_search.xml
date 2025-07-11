@@ -9,6 +9,7 @@
     android:background="@color/background_light"
     tools:context=".ui.search.SearchFragment">
 
+    <!-- Search Bar Section (Tetap Sama) -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -31,13 +32,16 @@
             android:autofillHints="name" />
     </LinearLayout>
 
+    <!-- RecyclerView (Tinggi diubah menjadi 0dp dengan weight) -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_search_results"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:clipToPadding="false"
         android:padding="8dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         tools:listitem="@layout/search_item_result"/>
+
 
 </LinearLayout>
