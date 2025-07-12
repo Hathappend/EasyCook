@@ -1,24 +1,28 @@
 package android.tugas.easycook.data.model;
 
+import android.tugas.easycook.data.response.AnalyzedInstruction;
+import android.tugas.easycook.data.response.ExtendedIngredient;
+
 import com.google.gson.annotations.SerializedName;
+
+import java.util.List;
 
 public class Recipe {
 
-    // Menggunakan @SerializedName agar nama field di Java bisa berbeda dari nama field di JSON
     @SerializedName("id")
     private int id;
 
     @SerializedName("title")
-    private String title; // API mengembalikan 'title', bukan 'name'
+    private String title;
 
     @SerializedName("image")
-    private String imageUrl; // API mengembalikan URL gambar (String)
+    private String imageUrl;
 
     @SerializedName("readyInMinutes")
-    private int readyInMinutes; // API mengembalikan 'readyInMinutes'
+    private int readyInMinutes;
 
     @SerializedName("summary")
-    private String summary; // Deskripsi dari API
+    private String summary;
 
     // FIELD BARU DITAMBAHKAN
     @SerializedName("spoonacularScore")
@@ -27,8 +31,11 @@ public class Recipe {
     @SerializedName("healthScore")
     private double healthScore;
 
+    @SerializedName("extendedIngredients")
+    private List<ExtendedIngredient> extendedIngredients;
+    @SerializedName("analyzedInstructions")
+    private List<AnalyzedInstruction> analyzedInstructions;
 
-    // Getter methods
     public int getId() {
         return id;
     }
@@ -49,7 +56,6 @@ public class Recipe {
         return summary;
     }
 
-    // GETTER BARU DITAMBAHKAN
     public double getSpoonacularScore() {
         return spoonacularScore;
     }
@@ -57,4 +63,7 @@ public class Recipe {
     public double getHealthScore() {
         return healthScore;
     }
+
+    public List<ExtendedIngredient> getExtendedIngredients() { return extendedIngredients; }
+    public List<AnalyzedInstruction> getAnalyzedInstructions() { return analyzedInstructions; }
 }

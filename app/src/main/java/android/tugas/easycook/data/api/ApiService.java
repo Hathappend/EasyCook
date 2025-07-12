@@ -1,6 +1,6 @@
 package android.tugas.easycook.data.api;
 
-import android.tugas.easycook.data.response.RandomRecipeResponse;
+import android.tugas.easycook.data.response.RecipeListResponse;
 import android.tugas.easycook.data.response.RecipeInformationResponse;
 import android.tugas.easycook.data.response.SearchApiResponse;
 import retrofit2.Call;
@@ -26,8 +26,17 @@ public interface ApiService {
     );
 
     @GET("recipes/random")
-    Call<RandomRecipeResponse> getRandomRecipes(
+    Call<RecipeListResponse> getRandomRecipes(
             @Query("number") int number,
             @Query("apiKey") String apiKey
+    );
+
+    @GET("recipes/complexSearch")
+    Call<RecipeListResponse> searchPopularRecipes(
+            @Query("sort") String sortBy,
+            @Query("number") int number,
+            @Query("addRecipeInformation") boolean addInfo,
+            @Query("apiKey") String apiKey,
+            @Query("offset") int offset
     );
 }

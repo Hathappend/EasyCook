@@ -5,9 +5,9 @@ import android.tugas.easycook.data.model.Recipe;
 import com.google.gson.annotations.SerializedName;
 import java.util.List;
 
-public class RandomRecipeResponse {
+public class RecipeListResponse {
 
-    @SerializedName("recipes")
+    @SerializedName(value="recipes", alternate={"results"})
     private List<Recipe> recipes;
 
     public List<Recipe> getRecipes() {
