@@ -6,7 +6,11 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.bumptech.glide.Glide;
+
 import java.util.List;
+import java.util.Locale;
 
 public class RecommendedAdapter extends RecyclerView.Adapter<RecommendedAdapter.RecipeViewHolder> {
 
@@ -20,6 +24,12 @@ public class RecommendedAdapter extends RecyclerView.Adapter<RecommendedAdapter.
     public RecommendedAdapter(List<Recipe> recipeList, OnItemClickListener listener) {
         this.recipeList = recipeList;
         this.listener = listener;
+    }
+
+    public void updateRecipes(List<Recipe> newRecipes) {
+        recipeList.clear();
+        recipeList.addAll(newRecipes);
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -50,11 +60,18 @@ public class RecommendedAdapter extends RecyclerView.Adapter<RecommendedAdapter.
         }
 
         public void bind(final Recipe recipe, final OnItemClickListener listener) {
-//            binding.tvNameRecommended.setText(recipe.getName());
-//            binding.tvTimeRecommended.setText(recipe.getTime());
+            // Set data dari API ke View
+            binding.tvNameRecommended.setText(recipe.getTitle());
+            binding.tvTimeRecommended.setText(recipe.getReadyInMinutes() + " minutes");
 
-//            binding.tvCaloriesRecommended.setText(recipe.getCalories());
-//            binding.recipeImage.setImageResource(recipe.getImage());
+            // Gunakan Glide untuk memuat gambar dari URL
+            Glide.with(itemView.getContext())
+                    .load(recipe.getImageUrl())
+                    .into(binding.recipeImage);
+
+            // Konversi spoonacularScore (0-100) menjadi rating bintang (0-5.0)
+            double rating = recipe.getSpoonacularScore() / 20.0;
+            binding.tvRatingRecommended.setText(String.format(Locale.US, "%.1f", rating));
 
             itemView.setOnClickListener(v -> listener.onItemClick(recipe.getId()));
         }

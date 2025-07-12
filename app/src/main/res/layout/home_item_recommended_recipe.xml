@@ -42,9 +42,9 @@
                     android:layout_marginEnd="4dp" />
 
                 <TextView
+                    android:id="@+id/tvRatingRecommended"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="4.9"
                     android:textSize="12sp"
                     android:textColor="#333333"
                     android:textStyle="bold" />

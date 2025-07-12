@@ -10,6 +10,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
+import android.tugas.easycook.data.api.ApiClient;
+import android.tugas.easycook.data.api.ApiService;
+import android.tugas.easycook.data.response.RandomRecipeResponse;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -22,9 +26,16 @@ import androidx.navigation.Navigation;
 import java.util.ArrayList;
 import java.util.List;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class HomeFragment extends Fragment {
 
     private FragmentHomeBinding binding;
+    private RecommendedAdapter recommendedAdapter;
+
+    private final String API_KEY = "9135788718664371a9de785a0ed83a7d";
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -41,6 +52,8 @@ public class HomeFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         setupRecommendedRecyclerView();
+        fetchRecommendedRecipes();
+
         setupPopularRecyclerView();
         setupSearchListener();
     }
@@ -64,25 +77,37 @@ public class HomeFragment extends Fragment {
     }
 
     private void setupRecommendedRecyclerView() {
-        // 1. Data palsu (dummy data)
-        List<Recipe> recommendedList = new ArrayList<>();
-//        recommendedList.add(new Recipe(654959, "Zucchini Noodles", "20 minutes", "180 kcal",R.drawable.ic_noodles, "Typically served with curly noodles, savory broth, chashu pork, nori, and a soft-boiled egg.\""));
-//        recommendedList.add(new Recipe(639411, "Chickpea Curry", "15 minutes", "200 kcal", R.drawable.ic_salad, "Typically served with curly noodles, savory broth, chashu pork, nori, and a soft-boiled egg."));
-//        recommendedList.add(new Recipe(663487,"Tiramisu", "10 minutes", "350 kcal", R.drawable.ic_dessert, "Typically served with curly noodles, savory broth, chashu pork, nori, and a soft-boiled egg."));
-
-        // 2. Adapter dengan Click Listener
-        RecommendedAdapter adapter = new RecommendedAdapter(recommendedList, recipeId -> {
+        // Inisialisasi adapter dengan list kosong
+        recommendedAdapter = new RecommendedAdapter(new ArrayList<>(), recipeId -> {
             Intent intent = new Intent(getActivity(), RecipeDetailActivity.class);
             intent.putExtra("RECIPE_ID", recipeId);
             startActivity(intent);
         });
 
-        // 3. LayoutManager menjadi HORIZONTAL
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
-
-        // 4. Hubungkan ke RecyclerView
         binding.rvRecommended.setLayoutManager(layoutManager);
-        binding.rvRecommended.setAdapter(adapter);
+        binding.rvRecommended.setAdapter(recommendedAdapter);
+    }
+
+    private void fetchRecommendedRecipes() {
+        ApiService apiService = ApiClient.getClient().create(ApiService.class);
+
+        apiService.getRandomRecipes(10, API_KEY).enqueue(new Callback<RandomRecipeResponse>() {
+            @Override
+            public void onResponse(Call<RandomRecipeResponse> call, Response<RandomRecipeResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    // Update adapter dengan data dari API
+                    recommendedAdapter.updateRecipes(response.body().getRecipes());
+                } else {
+                    Toast.makeText(getContext(), "Failed to load recommended recipes.", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<RandomRecipeResponse> call, Throwable t) {
+                Toast.makeText(getContext(), "Network Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void setupPopularRecyclerView() {
