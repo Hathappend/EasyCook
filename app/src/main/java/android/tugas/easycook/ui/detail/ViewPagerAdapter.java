@@ -1,27 +1,44 @@
 package android.tugas.easycook.ui.detail;
 
+import android.tugas.easycook.data.response.ExtendedIngredient;
+import android.tugas.easycook.data.response.Step;
+
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ViewPagerAdapter extends FragmentStateAdapter {
+
+    private List<ExtendedIngredient> ingredients = new ArrayList<>();
+    private List<Step> steps = new ArrayList<>();
 
     public ViewPagerAdapter(@NonNull FragmentActivity fragmentActivity) {
         super(fragmentActivity);
+    }
+    public void setIngredients(List<ExtendedIngredient> ingredients) {
+        this.ingredients = ingredients;
+    }
+
+    public void setInstructions(List<Step> steps) {
+        this.steps = steps;
     }
 
     @NonNull
     @Override
     public Fragment createFragment(int position) {
-        // Mengembalikan fragment yang sesuai berdasarkan posisi tab
         switch (position) {
-            case 0: // Posisi 0 untuk tab pertama (Ingredients)
-                return new IngredientsFragment();
-            case 1: // Posisi 1 untuk tab kedua (Instructions)
-                return new InstructionsFragment();
+            case 0:
+                // Kirim data ke IngredientsFragment
+                return IngredientsFragment.newInstance(ingredients);
+            case 1:
+                // Kirim data ke InstructionsFragment
+                return InstructionsFragment.newInstance(steps);
             default:
-                return new IngredientsFragment();
+                return IngredientsFragment.newInstance(ingredients);
         }
     }
 

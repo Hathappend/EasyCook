@@ -1,6 +1,7 @@
 package android.tugas.easycook.ui.detail;
 
 import android.os.Bundle;
+import android.tugas.easycook.data.response.ExtendedIngredient;
 import android.tugas.easycook.databinding.FragmentIngredientsBinding;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,37 +9,41 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class IngredientsFragment extends Fragment {
 
     private FragmentIngredientsBinding binding;
 
+    private static final String ARG_INGREDIENTS = "ingredients_list";
+
+    public static IngredientsFragment newInstance(List<ExtendedIngredient> ingredients) {
+        IngredientsFragment fragment = new IngredientsFragment();
+        Bundle args = new Bundle();
+        ArrayList<String> ingredientStrings = new ArrayList<>();
+        for (ExtendedIngredient ingredient : ingredients) {
+            ingredientStrings.add(ingredient.getOriginal());
+        }
+        args.putStringArrayList(ARG_INGREDIENTS, ingredientStrings);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentIngredientsBinding.inflate(inflater, container, false);
-        
-        String ingredientsText = "For the broth:\n" +
-                "- 2 tablespoons miso paste (white or red)\n" +
-                "- 2 cups chicken broth or vegetable broth\n" +
-                "- 1 teaspoon soy sauce\n" +
-                "- 1 teaspoon sesame oil\n" +
-                "- 2 cloves garlic, minced\n" +
-                "- 1 teaspoon grated ginger\n" +
-                "- 1 tablespoon mirin (optional, for sweetness)\n" +
-                "- Chili oil (optional, for a spicy kick)\n\n" +
-                "For the Noodles:\n" +
-                "- 150-200 grams ramen noodles (fresh or dried)\n\n" +
-                "Toppings (Optional but Recommended):\n" +
-                "- 1 soft-boiled egg (ajitama)\n" +
-                "- 2-3 slices chashu pork or grilled chicken\n" +
-                "- ¼ cup corn kernels\n" +
-                "- ¼ cup bean sprouts\n" +
-                "- Green onions, chopped\n" +
-                "- Nori (seaweed sheet)\n" +
-                "- Sesame seeds";
 
-        binding.tvIngredientsContent.setText(ingredientsText);
-
+        if (getArguments() != null) {
+            List<String> ingredientStrings = getArguments().getStringArrayList(ARG_INGREDIENTS);
+            if (ingredientStrings != null) {
+                StringBuilder sb = new StringBuilder();
+                for (String ingredient : ingredientStrings) {
+                    sb.append("• ").append(ingredient).append("\n\n");
+                }
+                binding.tvIngredientsContent.setText(sb.toString());
+            }
+        }
         return binding.getRoot();
     }
 

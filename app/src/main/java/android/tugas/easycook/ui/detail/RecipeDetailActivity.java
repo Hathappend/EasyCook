@@ -1,18 +1,34 @@
 package android.tugas.easycook.ui.detail;
 
 import android.os.Bundle;
-import android.tugas.easycook.R;
 import android.tugas.easycook.databinding.ActivityRecipeDetailBinding;
 import android.widget.Toast;
+import android.text.Html;
+import android.tugas.easycook.data.api.ApiClient;
+import android.tugas.easycook.data.api.ApiService;
+import android.tugas.easycook.data.response.RecipeInformationResponse;
+import android.tugas.easycook.data.response.ExtendedIngredient;
+import android.tugas.easycook.data.response.Step;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+
 import com.google.android.material.tabs.TabLayoutMediator;
+import com.bumptech.glide.Glide;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+import java.util.List;
 
 public class RecipeDetailActivity extends AppCompatActivity {
 
     private ActivityRecipeDetailBinding binding;
     public static final String RECIPE_ID = "RECIPE_ID";
+    private ApiService apiService;
+    private final String API_KEY = "9135788718664371a9de785a0ed83a7d";
+    private boolean isDescriptionExpanded = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,18 +36,19 @@ public class RecipeDetailActivity extends AppCompatActivity {
         binding = ActivityRecipeDetailBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        apiService = ApiClient.getClient().create(ApiService.class);
+
         int recipeId = getIntent().getIntExtra(RECIPE_ID, -1);
 
         if (recipeId != -1) {
-            Toast.makeText(this, "Received Recipe ID: " + recipeId, Toast.LENGTH_SHORT).show();
-            loadDummyData();
+            fetchRecipeDetails(recipeId);
         } else {
             Toast.makeText(this, "Recipe not found", Toast.LENGTH_SHORT).show();
             finish();
         }
 
         setupToolbar();
-        setupTabs();
+
     }
 
     private void setupToolbar() {
@@ -44,16 +61,71 @@ public class RecipeDetailActivity extends AppCompatActivity {
         binding.toolbarLayout.setTitle("Recipe Details");
     }
 
-    private void loadDummyData() {
-        binding.ivRecipeImageDetail.setImageResource(R.drawable.ic_noodles);
-        binding.tvRecipeNameDetail.setText("Miso Ramen");
-        binding.tvRatingDetail.setText("4.8");
-        binding.tvTimeDetail.setText("10 minutes");
-        binding.tvDescriptionDetail.setText("Miso Ramen features a rich, slightly creamy broth made with fermented soybean paste (miso). It's savory, hearty, and often served with toppings like sweet corn, bean sprouts, ground meat, and butter.");
+    private void fetchRecipeDetails(int recipeId) {
+        apiService.getRecipeInformation(recipeId, API_KEY).enqueue(new Callback<RecipeInformationResponse>() {
+            @Override
+            public void onResponse(Call<RecipeInformationResponse> call, Response<RecipeInformationResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    RecipeInformationResponse data = response.body();
+
+                    binding.toolbarLayout.setTitle(data.getTitle());
+
+                    // Tampilkan data utama
+                    Glide.with(RecipeDetailActivity.this).load(data.getImageUrl()).into(binding.ivRecipeImageDetail);
+                    binding.tvRecipeNameDetail.setText(data.getTitle());
+                    binding.tvRatingDetail.setText("4.8");
+                    binding.tvTimeDetail.setText(data.getReadyInMinutes() + " minutes");
+
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+                        binding.tvDescriptionDetail.setText(Html.fromHtml(data.getSummary(), Html.FROM_HTML_MODE_LEGACY));
+                    } else {
+                        binding.tvDescriptionDetail.setText(Html.fromHtml(data.getSummary()));
+                    }
+
+                    setupExpandableDescription();
+
+                    // Siapkan data untuk ViewPager
+                    List<ExtendedIngredient> ingredients = data.getExtendedIngredients();
+                    List<Step> steps = data.getAnalyzedInstructions().get(0).getSteps();
+
+                    setupTabs(ingredients, steps);
+                } else {
+                    Toast.makeText(RecipeDetailActivity.this, "Failed to load details", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<RecipeInformationResponse> call, Throwable t) {
+                Toast.makeText(RecipeDetailActivity.this, "Network Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+    private void setupExpandableDescription() {
+        binding.tvReadMore.setOnClickListener(v -> {
+            isDescriptionExpanded = !isDescriptionExpanded;
+            if (isDescriptionExpanded) {
+                // Perluas deskripsi
+                binding.tvDescriptionDetail.setMaxLines(Integer.MAX_VALUE);
+                binding.tvDescriptionDetail.setEllipsize(null);
+                binding.tvReadMore.setText("Less");
+            } else {
+                // Ciutkan deskripsi
+                binding.tvDescriptionDetail.setMaxLines(3);
+                binding.tvDescriptionDetail.setEllipsize(android.text.TextUtils.TruncateAt.END);
+                binding.tvReadMore.setText("Read more");
+            }
+
+        });
     }
 
-    private void setupTabs() {
+
+    private void setupTabs(List<ExtendedIngredient> ingredients, List<Step> steps) {
         ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(this);
+
+        // Kirim data ke adapter
+        viewPagerAdapter.setIngredients(ingredients);
+        viewPagerAdapter.setInstructions(steps);
+
         binding.viewPager.setAdapter(viewPagerAdapter);
 
         new TabLayoutMediator(binding.tabLayout, binding.viewPager,

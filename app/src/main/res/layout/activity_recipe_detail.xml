@@ -9,7 +9,7 @@
     android:fitsSystemWindows="true"
     tools:context=".ui.detail.RecipeDetailActivity">
 
-    <!-- 1. App Bar: Bagian atas yang berisi gambar -->
+    <!-- 1. Bagian atas yang berisi gambar -->
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/app_bar"
         android:layout_width="match_parent"
@@ -36,13 +36,6 @@
                 app:layout_collapseMode="parallax"
                 tools:src="@drawable/ic_launcher_background" />
 
-            <!-- Gradient untuk memperjelas teks di atas gambar -->
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="150dp"
-                android:layout_gravity="top"
-                android:background="@drawable/gradient_top_to_bottom"/>
-
             <!-- Toolbar yang akan muncul saat di-scroll -->
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbar"
@@ -59,6 +52,7 @@
         android:id="@+id/content_scroll_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginTop="-80dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
@@ -66,11 +60,98 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
+            <!-- 3. Kartu Informasi Utama (Offset Card) -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/info_card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="24dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="4dp"
+                app:layout_anchor="@id/app_bar"
+                app:layout_anchorGravity="bottom|center_horizontal">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:id="@+id/tv_recipe_name_detail"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/text_primary"
+                        android:textSize="22sp"
+                        android:textStyle="bold"
+                        tools:text="Miso Ramen" />
+
+                    <!-- Rating dan Waktu -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginTop="8dp"
+                        android:gravity="center_vertical">
+
+                        <ImageView
+                            android:layout_width="16dp"
+                            android:layout_height="16dp"
+                            android:src="@drawable/ic_star"
+                            app:tint="@color/star_color"/>
+
+                        <TextView
+                            android:id="@+id/tv_rating_detail"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="4dp"
+                            tools:text="4.8"
+                            android:textColor="@color/text_secondary"/>
+
+                        <ImageView
+                            android:layout_width="16dp"
+                            android:layout_height="16dp"
+                            android:src="@drawable/ic_clock"
+                            android:layout_marginStart="16dp"
+                            app:tint="@color/text_secondary"/>
+
+                        <TextView
+                            android:id="@+id/tv_time_detail"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="4dp"
+                            tools:text="10 minutes"
+                            android:textColor="@color/text_secondary"/>
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/tv_description_detail"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:textColor="@color/text_secondary"
+                        android:lineSpacingExtra="4dp"
+                        android:maxLines="3"
+                        android:ellipsize="end"/>
+
+                    <TextView
+                        android:id="@+id/tv_read_more"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="Read more"
+                        android:textStyle="bold"
+                        android:textColor="@color/primary_orange" />
+
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
             <!-- Spacer untuk memberi ruang bagi kartu informasi utama -->
             <View
                 android:id="@+id/info_card_spacer"
                 android:layout_width="match_parent"
-                android:layout_height="120dp"/>
+                android:layout_height="50dp"/>
 
             <!-- Kartu Ingredients & Instructions -->
             <androidx.cardview.widget.CardView
@@ -79,7 +160,8 @@
                 android:layout_marginHorizontal="16dp"
                 android:layout_marginBottom="16dp"
                 app:cardCornerRadius="12dp"
-                app:cardElevation="2dp">
+                app:layout_anchor="@id/app_bar"
+                app:layout_anchorGravity="bottom|center_horizontal">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -108,82 +190,6 @@
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
-
-    <!-- 3. Kartu Informasi Utama (Offset Card) - INI KUNCINYA -->
-    <androidx.cardview.widget.CardView
-        android:id="@+id/info_card"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="24dp"
-        app:cardCornerRadius="12dp"
-        app:cardElevation="4dp"
-        app:layout_anchor="@id/app_bar"
-        app:layout_anchorGravity="bottom|center_horizontal">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="16dp">
-
-            <TextView
-                android:id="@+id/tv_recipe_name_detail"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/text_primary"
-                android:textSize="22sp"
-                android:textStyle="bold"
-                tools:text="Miso Ramen" />
-
-            <!-- Rating dan Waktu -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="8dp"
-                android:gravity="center_vertical">
-
-                <ImageView
-                    android:layout_width="16dp"
-                    android:layout_height="16dp"
-                    android:src="@drawable/ic_star"
-                    app:tint="@color/star_color"/>
-
-                <TextView
-                    android:id="@+id/tv_rating_detail"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="4dp"
-                    tools:text="4.8"
-                    android:textColor="@color/text_secondary"/>
-
-                <ImageView
-                    android:layout_width="16dp"
-                    android:layout_height="16dp"
-                    android:src="@drawable/ic_clock"
-                    android:layout_marginStart="16dp"
-                    app:tint="@color/text_secondary"/>
-
-                <TextView
-                    android:id="@+id/tv_time_detail"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="4dp"
-                    tools:text="10 minutes"
-                    android:textColor="@color/text_secondary"/>
-            </LinearLayout>
-
-            <TextView
-                android:id="@+id/tv_description_detail"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:textColor="@color/text_secondary"
-                android:lineSpacingExtra="4dp"
-                tools:text="Miso Ramen features a rich, slightly creamy broth made with fermented soybean paste (miso). It's savory, hearty, and often served with toppings like sweet corn, bean sprouts, ground meat, and butter."/>
-
-        </LinearLayout>
-    </androidx.cardview.widget.CardView>
 
     <!-- 4. Tombol Floating "Check Nutrition" -->
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
