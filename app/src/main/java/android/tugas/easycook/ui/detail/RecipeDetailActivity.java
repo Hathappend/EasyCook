@@ -1,12 +1,13 @@
 package android.tugas.easycook.ui.detail;
 
 import android.os.Bundle;
+import android.text.method.LinkMovementMethod;
 import android.tugas.easycook.databinding.ActivityRecipeDetailBinding;
 import android.widget.Toast;
 import android.text.Html;
 import android.tugas.easycook.data.api.ApiClient;
 import android.tugas.easycook.data.api.ApiService;
-import android.tugas.easycook.data.response.RecipeInformationResponse;
+import android.tugas.easycook.data.model.Recipe;
 import android.tugas.easycook.data.response.ExtendedIngredient;
 import android.tugas.easycook.data.response.Step;
 
@@ -62,18 +63,21 @@ public class RecipeDetailActivity extends AppCompatActivity {
     }
 
     private void fetchRecipeDetails(int recipeId) {
-        apiService.getRecipeInformation(recipeId, API_KEY).enqueue(new Callback<RecipeInformationResponse>() {
+        apiService.getRecipeInformation(recipeId, API_KEY).enqueue(new Callback<Recipe>() {
             @Override
-            public void onResponse(Call<RecipeInformationResponse> call, Response<RecipeInformationResponse> response) {
+            public void onResponse(Call<Recipe> call, Response<Recipe> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    RecipeInformationResponse data = response.body();
+
+                    Recipe data = response.body();
 
                     binding.toolbarLayout.setTitle(data.getTitle());
 
-                    // Tampilkan data utama
                     Glide.with(RecipeDetailActivity.this).load(data.getImageUrl()).into(binding.ivRecipeImageDetail);
                     binding.tvRecipeNameDetail.setText(data.getTitle());
-                    binding.tvRatingDetail.setText("4.8");
+
+                    double rating = data.getSpoonacularScore() / 20.0;
+                    binding.tvRatingDetail.setText(String.format(java.util.Locale.US, "%.1f", rating));
+
                     binding.tvTimeDetail.setText(data.getReadyInMinutes() + " minutes");
 
                     if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
@@ -81,21 +85,26 @@ public class RecipeDetailActivity extends AppCompatActivity {
                     } else {
                         binding.tvDescriptionDetail.setText(Html.fromHtml(data.getSummary()));
                     }
+                    binding.tvDescriptionDetail.setLinkTextColor(getResources().getColor(android.R.color.holo_blue_dark));
+                    binding.tvDescriptionDetail.setMovementMethod(LinkMovementMethod.getInstance());
 
                     setupExpandableDescription();
 
-                    // Siapkan data untuk ViewPager
                     List<ExtendedIngredient> ingredients = data.getExtendedIngredients();
-                    List<Step> steps = data.getAnalyzedInstructions().get(0).getSteps();
-
-                    setupTabs(ingredients, steps);
+                    // tidak kosong sebelum mengambil steps
+                    if (data.getAnalyzedInstructions() != null && !data.getAnalyzedInstructions().isEmpty()) {
+                        List<Step> steps = data.getAnalyzedInstructions().get(0).getSteps();
+                        setupTabs(ingredients, steps);
+                    } else {
+                        setupTabs(ingredients, new java.util.ArrayList<>());
+                    }
                 } else {
                     Toast.makeText(RecipeDetailActivity.this, "Failed to load details", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
-            public void onFailure(Call<RecipeInformationResponse> call, Throwable t) {
+            public void onFailure(Call<Recipe> call, Throwable t) {
                 Toast.makeText(RecipeDetailActivity.this, "Network Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });

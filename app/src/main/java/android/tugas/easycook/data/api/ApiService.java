@@ -1,7 +1,7 @@
 package android.tugas.easycook.data.api;
 
+import android.tugas.easycook.data.model.Recipe;
 import android.tugas.easycook.data.response.RecipeListResponse;
-import android.tugas.easycook.data.response.RecipeInformationResponse;
 import android.tugas.easycook.data.response.SearchApiResponse;
 import retrofit2.Call;
 import retrofit2.http.GET;
@@ -20,7 +20,7 @@ public interface ApiService {
     );
 
     @GET("recipes/{id}/information")
-    Call<RecipeInformationResponse> getRecipeInformation(
+    Call<Recipe> getRecipeInformation(
             @Path("id") int id,
             @Query("apiKey") String apiKey
     );

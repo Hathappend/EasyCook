@@ -9,7 +9,6 @@ public class SearchApiResponse {
     @SerializedName("results")
     private List<Recipe> results;
 
-    // TAMBAHKAN FIELD INI
     @SerializedName("totalResults")
     private int totalResults;
 
@@ -17,7 +16,6 @@ public class SearchApiResponse {
         return results;
     }
 
-    // TAMBAHKAN GETTER INI
     public int getTotalResults() {
         return totalResults;
     }
