@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Toast;
+import android.tugas.easycook.BuildConfig;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -42,8 +43,7 @@ public class SearchFragment extends Fragment {
     private int currentOffset = 0;
     private int totalResults = 0;
     private static final int PAGE_SIZE = 10;
-
-    private final String API_KEY = "9135788718664371a9de785a0ed83a7d";
+    private final String API_KEY = BuildConfig.API_KEY;
 
     private final ActivityResultLauncher<Intent> recipeDetailLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),

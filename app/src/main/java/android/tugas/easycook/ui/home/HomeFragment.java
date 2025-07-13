@@ -2,6 +2,7 @@ package android.tugas.easycook.ui.home;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.tugas.easycook.BuildConfig;
 import android.tugas.easycook.R;
 import android.tugas.easycook.data.model.Category;
 import android.tugas.easycook.data.model.Recipe;
@@ -43,7 +44,7 @@ public class HomeFragment extends Fragment {
     private List<Category> categoryList;
     private int popularCurrentPage = 0;
     private final int RECIPES_PER_PAGE = 10;
-    private final String API_KEY = "9135788718664371a9de785a0ed83a7d";
+    private final String API_KEY = BuildConfig.API_KEY;
     private final ApiService apiService = ApiClient.getClient().create(ApiService.class);
 
     public View onCreateView(@NonNull LayoutInflater inflater,

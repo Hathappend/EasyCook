@@ -66,12 +66,12 @@ public class AddPlanningActivity extends AppCompatActivity {
 
     private void setupDropdowns() {
         // Setup dropdown hari
-        String[] days = {"Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu", "Minggu"};
+        String[] days = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
         ArrayAdapter<String> dayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, days);
         binding.actvSelectDay.setAdapter(dayAdapter);
 
         // Setup dropdown waktu makan
-        String[] mealTimes = {"Pagi (Morning)", "Siang (Afternoon)", "Malam (Night)"};
+        String[] mealTimes = {"Morning", "Afternoon", "Night"};
         ArrayAdapter<String> mealTimeAdapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, mealTimes);
         binding.actvSelectMealTime.setAdapter(mealTimeAdapter);
     }
@@ -81,7 +81,7 @@ public class AddPlanningActivity extends AppCompatActivity {
         String selectedMealTime = binding.actvSelectMealTime.getText().toString();
 
         if (selectedDay.isEmpty() || selectedMealTime.isEmpty() || selectedRecipeId == -1) {
-            Toast.makeText(this, "Harap lengkapi semua pilihan", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Please make sure all fields are filled out", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -97,21 +97,21 @@ public class AddPlanningActivity extends AppCompatActivity {
 
     private int getDayIndex(String day) {
         switch (day) {
-            case "Senin": return 1;
-            case "Selasa": return 2;
-            case "Rabu": return 3;
-            case "Kamis": return 4;
-            case "Jumat": return 5;
-            case "Sabtu": return 6;
-            case "Minggu": return 7;
+            case "Monday": return 1;
+            case "Tuesday": return 2;
+            case "Wednesday": return 3;
+            case "Thursday": return 4;
+            case "Friday": return 5;
+            case "Saturday": return 6;
+            case "Sunday": return 7;
             default: return -1;
         }
     }
 
     private int getMealIndex(String mealTime) {
-        if (mealTime.startsWith("Pagi")) return 0;
-        if (mealTime.startsWith("Siang")) return 1;
-        if (mealTime.startsWith("Malam")) return 2;
+        if (mealTime.startsWith("Morning")) return 0;
+        if (mealTime.startsWith("Afternoon")) return 1;
+        if (mealTime.startsWith("Night")) return 2;
         return -1;
     }
 }

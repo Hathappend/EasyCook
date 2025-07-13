@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.method.LinkMovementMethod;
+import android.tugas.easycook.BuildConfig;
 import android.tugas.easycook.databinding.ActivityRecipeDetailBinding;
 import android.tugas.easycook.ui.nutrition.NutritionActivity;
 import android.view.View;
@@ -33,7 +34,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
     private ActivityRecipeDetailBinding binding;
     public static final String RECIPE_ID = "RECIPE_ID";
     private ApiService apiService;
-    private final String API_KEY = "9135788718664371a9de785a0ed83a7d";
+    private final String API_KEY = BuildConfig.API_KEY;
     private static final int NUTRITION_REQUEST_CODE = 101;
     private boolean isDescriptionExpanded = false;
     private boolean isSelectingRecipe = false;

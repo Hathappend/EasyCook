@@ -1,3 +1,6 @@
+import java.util.Properties
+import java.io.FileInputStream
+
 plugins {
     alias(libs.plugins.android.application)
 }
@@ -5,6 +8,12 @@ plugins {
 android {
     namespace = "android.tugas.easycook"
     compileSdk = 35
+
+    buildFeatures {
+        viewBinding = true
+        buildConfig = true
+    }
+
 
     defaultConfig {
         applicationId = "android.tugas.easycook"
@@ -14,6 +23,12 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        val properties = Properties()
+        properties.load(FileInputStream(rootProject.file("local.properties")))
+
+        buildConfigField("String", "API_KEY", "\"${properties.getProperty("API_KEY")}\"")
+
     }
 
     buildTypes {
@@ -50,8 +65,13 @@ dependencies {
     implementation("androidx.core:core-ktx:1.16.0")
     implementation("androidx.room:room-runtime:2.6.1")
     implementation("androidx.gridlayout:gridlayout:1.1.0")
+    implementation(libs.room.compiler)
     annotationProcessor("androidx.room:room-compiler:2.6.1")
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+}
+
+configurations.all {
+    exclude(group = "com.intellij", module = "annotations")
 }

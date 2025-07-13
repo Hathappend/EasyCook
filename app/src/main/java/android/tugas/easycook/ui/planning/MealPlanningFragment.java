@@ -3,6 +3,7 @@ package android.tugas.easycook.ui.planning;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.tugas.easycook.BuildConfig;
 import android.tugas.easycook.R;
 import android.tugas.easycook.data.api.ApiClient;
 import android.tugas.easycook.data.api.ApiService;
@@ -46,7 +47,7 @@ public class MealPlanningFragment extends Fragment {
     private ExecutorService executorService;
     private FragmentMealPlanningBinding binding;
     private ApiService apiService;
-    private final String API_KEY = "9135788718664371a9de785a0ed83a7d";
+    private final String API_KEY = BuildConfig.API_KEY;
 
     private final ActivityResultLauncher<Intent> addPlanningLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
