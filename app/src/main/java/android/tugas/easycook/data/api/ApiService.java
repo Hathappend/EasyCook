@@ -3,6 +3,7 @@ package android.tugas.easycook.data.api;
 import android.tugas.easycook.data.model.Recipe;
 import android.tugas.easycook.data.response.DayPlan;
 import android.tugas.easycook.data.response.MealPlanResponse;
+import android.tugas.easycook.data.response.NutritionResponse;
 import android.tugas.easycook.data.response.RecipeListResponse;
 import android.tugas.easycook.data.response.SearchApiResponse;
 import retrofit2.Call;
@@ -55,6 +56,12 @@ public interface ApiService {
             @Query("timeFrame") String timeFrame,
             @Query("targetCalories") String targetCalories,
             @Query("diet") String diet,
+            @Query("apiKey") String apiKey
+    );
+
+    @GET("recipes/{id}/nutritionWidget.json")
+    Call<NutritionResponse> getNutritionWidget(
+            @Path("id") int id,
             @Query("apiKey") String apiKey
     );
 }

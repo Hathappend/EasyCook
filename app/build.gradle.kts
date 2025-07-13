@@ -49,6 +49,7 @@ dependencies {
     implementation("com.github.bumptech.glide:glide:4.16.0")
     implementation("androidx.core:core-ktx:1.16.0")
     implementation("androidx.room:room-runtime:2.6.1")
+    implementation("androidx.gridlayout:gridlayout:1.1.0")
     annotationProcessor("androidx.room:room-compiler:2.6.1")
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)

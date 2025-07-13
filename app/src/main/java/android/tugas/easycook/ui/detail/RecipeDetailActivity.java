@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.method.LinkMovementMethod;
 import android.tugas.easycook.databinding.ActivityRecipeDetailBinding;
+import android.tugas.easycook.ui.nutrition.NutritionActivity;
 import android.view.View;
 import android.widget.Toast;
 import android.text.Html;
@@ -14,6 +15,7 @@ import android.tugas.easycook.data.model.Recipe;
 import android.tugas.easycook.data.response.ExtendedIngredient;
 import android.tugas.easycook.data.response.Step;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
@@ -32,6 +34,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
     public static final String RECIPE_ID = "RECIPE_ID";
     private ApiService apiService;
     private final String API_KEY = "9135788718664371a9de785a0ed83a7d";
+    private static final int NUTRITION_REQUEST_CODE = 101;
     private boolean isDescriptionExpanded = false;
     private boolean isSelectingRecipe = false;
     private Recipe currentRecipe;
@@ -59,13 +62,11 @@ public class RecipeDetailActivity extends AppCompatActivity {
     }
 
     private void setupToolbar() {
-        Toolbar toolbar = binding.toolbar;
-        setSupportActionBar(toolbar);
+        setSupportActionBar(binding.toolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowTitleEnabled(false);
         }
-        binding.toolbarLayout.setTitle("Recipe Details");
     }
 
     private void fetchRecipeDetails(int recipeId) {
@@ -130,19 +131,46 @@ public class RecipeDetailActivity extends AppCompatActivity {
     }
 
     private void openNutritionPage() {
-        Toast.makeText(this, "Membuka halaman cek nutrisi...", Toast.LENGTH_SHORT).show();
-        // TODO: Ganti Toast ini dengan Intent ke NutritionActivity Anda nanti
-        // Intent intent = new Intent(this, NutritionActivity.class);
-        // intent.putExtra("RECIPE_ID", currentRecipe.getId());
-        // startActivity(intent);
+        if (currentRecipe != null) {
+            Intent intent = new Intent(this, NutritionActivity.class);
+            intent.putExtra("RECIPE_ID", currentRecipe.getId());
+            intent.putExtra("RECIPE_TITLE", currentRecipe.getTitle());
+            intent.putExtra("RECIPE_IMAGE_URL", currentRecipe.getImageUrl());
+            intent.putExtra("IS_SELECTING_RECIPE", isSelectingRecipe);
+
+            startActivityForResult(intent, NUTRITION_REQUEST_CODE);
+        } else {
+            Toast.makeText(this, "Please wait while the recipe data is loading", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        // Periksa apakah ini adalah hasil dari NutritionActivity dan hasilnya OK
+        if (requestCode == NUTRITION_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            // Jika ya, maka kita teruskan hasilnya dan tutup halaman detail ini juga
+            if (data != null) {
+                Intent resultIntent = new Intent();
+                resultIntent.putExtra("SELECTED_RECIPE_ID", data.getIntExtra("SELECTED_RECIPE_ID", -1));
+                resultIntent.putExtra("SELECTED_RECIPE_TITLE", data.getStringExtra("SELECTED_RECIPE_TITLE"));
+                setResult(Activity.RESULT_OK, resultIntent);
+            }
+            finish();
+        }
     }
 
     private void setupButtonListeners() {
         // Listener untuk tombol FAB default
-        binding.fabCheckNutrition.setOnClickListener(v -> openNutritionPage());
+        binding.fabCheckNutrition.setOnClickListener(v -> {
+            openNutritionPage();
+        });
 
-        // Listener untuk tombol di dalam grup planning
-        binding.btnCheckNutritionPlanning.setOnClickListener(v -> openNutritionPage());
+        // Listener untuk tombol "Cek Nutrisi" di dalam grup planning
+        binding.btnCheckNutritionPlanning.setOnClickListener(v -> {
+            openNutritionPage();
+        });
 
         // Listener untuk tombol "Add Planning"
         binding.btnAddToPlan.setOnClickListener(v -> {
@@ -177,7 +205,6 @@ public class RecipeDetailActivity extends AppCompatActivity {
         });
     }
 
-
     private void setupTabs(List<ExtendedIngredient> ingredients, List<Step> steps) {
         ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(this);
 
@@ -197,6 +224,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
                 }
         ).attach();
     }
+
 
     @Override
     public boolean onSupportNavigateUp() {

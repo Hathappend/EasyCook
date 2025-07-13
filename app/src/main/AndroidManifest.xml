@@ -37,6 +37,11 @@
         <activity
             android:name=".ui.search.SearchActivity"
             android:exported="false" />
+
+        <activity
+            android:name=".ui.nutrition.NutritionActivity"
+            android:theme="@style/Theme.EasyCook.NoActionBar"
+            android:exported="false" />
     </application>
 
 </manifest>
