@@ -16,7 +16,7 @@ import java.util.List;
 public class SearchAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private final List<Recipe> recipeList;
-    private final OnItemClickListener listener;
+    private final OnRecipeClickListener listener;
     private final OnShowMoreClickListener showMoreListener;
 
     private static final int VIEW_TYPE_ITEM = 0;
@@ -24,15 +24,15 @@ public class SearchAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     private boolean showFooter = false;
 
-    public interface OnItemClickListener {
-        void onItemClick(int recipeId);
+    public interface OnRecipeClickListener {
+        void onRecipeClick(Recipe recipe);
     }
 
     public interface OnShowMoreClickListener {
         void onShowMoreClick();
     }
 
-    public SearchAdapter(List<Recipe> recipeList, OnItemClickListener listener, OnShowMoreClickListener showMoreListener) {
+    public SearchAdapter(List<Recipe> recipeList, OnRecipeClickListener listener, OnShowMoreClickListener showMoreListener) {
         this.recipeList = recipeList;
         this.listener = listener;
         this.showMoreListener = showMoreListener;
@@ -90,16 +90,14 @@ public class SearchAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     }
 
     public void showFooter(boolean show) {
-        if (this.showFooter == show) return; // Tidak ada perubahan
+        if (this.showFooter == show) return;
         this.showFooter = show;
         if (show) {
-            notifyItemInserted(recipeList.size()); // Tambah footer di akhir
+            notifyItemInserted(recipeList.size());
         } else {
-            notifyItemRemoved(recipeList.size()); // Hapus footer dari akhir
+            notifyItemRemoved(recipeList.size());
         }
     }
-
-    // ViewHolder untuk Resep (tetap sama)
     static class RecipeViewHolder extends RecyclerView.ViewHolder {
         private final SearchItemResultBinding binding;
 
@@ -108,7 +106,7 @@ public class SearchAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             this.binding = binding;
         }
 
-        public void bind(final Recipe recipe, final OnItemClickListener listener) {
+        public void bind(final Recipe recipe, final OnRecipeClickListener  listener) {
             binding.tvNameSearch.setText(recipe.getTitle());
             if (recipe.getSummary() != null) {
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
@@ -127,11 +125,10 @@ public class SearchAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                     .load(recipe.getImageUrl())
                     .placeholder(R.drawable.ic_launcher_background)
                     .into(binding.ivRecipeSearch);
-            itemView.setOnClickListener(v -> listener.onItemClick(recipe.getId()));
+            itemView.setOnClickListener(v -> listener.onRecipeClick(recipe));
         }
     }
 
-    // ViewHolder baru untuk Tombol "Show More"
     static class FooterViewHolder extends RecyclerView.ViewHolder {
         private final SearchItemShowMoreBinding binding;
 

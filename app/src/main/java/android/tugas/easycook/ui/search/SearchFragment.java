@@ -1,5 +1,6 @@
 package android.tugas.easycook.ui.search;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.tugas.easycook.data.api.ApiClient;
@@ -15,6 +16,8 @@ import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -30,11 +33,10 @@ import retrofit2.Response;
 public class SearchFragment extends Fragment {
 
     private static final String TAG = "SearchDebug";
-
     private FragmentSearchBinding binding;
     private SearchAdapter searchAdapter;
     private ApiService apiService;
-
+    private boolean isSelectingRecipe = false;
     private boolean isLoading = false;
     private String currentQuery = "";
     private int currentOffset = 0;
@@ -42,6 +44,19 @@ public class SearchFragment extends Fragment {
     private static final int PAGE_SIZE = 10;
 
     private final String API_KEY = "9135788718664371a9de785a0ed83a7d";
+
+    private final ActivityResultLauncher<Intent> recipeDetailLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                // Jika RecipeDetailActivity mengembalikan hasil OK, teruskan hasilnya ke activity sebelumnya
+                if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
+                    if (getActivity() != null) {
+                        getActivity().setResult(Activity.RESULT_OK, result.getData());
+                        getActivity().finish();
+                    }
+                }
+            }
+    );
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -54,6 +69,12 @@ public class SearchFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         apiService = ApiClient.getClient().create(ApiService.class);
+
+        // Cek apakah fragment dibuka dalam mode memilih
+        if (getArguments() != null) {
+            isSelectingRecipe = getArguments().getBoolean("IS_SELECTING_RECIPE", false);
+        }
+
         setupRecyclerView();
         setupSearchListener();
 
@@ -61,12 +82,11 @@ public class SearchFragment extends Fragment {
             String queryFromHome = getArguments().getString("search_query");
             if (queryFromHome != null && !queryFromHome.isEmpty()) {
                 binding.etSearch.setText(queryFromHome);
-                // Langsung lakukan pencarian
                 currentQuery = queryFromHome;
                 currentOffset = 0;
                 totalResults = 0;
-                searchAdapter.showFooter(false);
                 searchAdapter.clear();
+                searchAdapter.showFooter(false);
                 performSearch();
             }
         }
@@ -74,10 +94,16 @@ public class SearchFragment extends Fragment {
 
     private void setupRecyclerView() {
         searchAdapter = new SearchAdapter(new ArrayList<>(),
-                recipeId -> {
+                recipe -> {
                     Intent intent = new Intent(getActivity(), RecipeDetailActivity.class);
-                    intent.putExtra("RECIPE_ID", recipeId);
-                    startActivity(intent);
+                    intent.putExtra("RECIPE_ID", recipe.getId());
+                    // Teruskan flag 'isSelectingRecipe' ke halaman detail
+                    intent.putExtra("IS_SELECTING_RECIPE", isSelectingRecipe);
+                    if (isSelectingRecipe) {
+                        recipeDetailLauncher.launch(intent);
+                    } else {
+                        startActivity(intent);
+                    }
                 },
                 () -> {
                     if (!isLoading) {

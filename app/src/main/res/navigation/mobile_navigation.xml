@@ -43,10 +43,10 @@
     </fragment>
 
     <fragment
-        android:id="@+id/navigation_meal_planning">
-<!--        android:name="android.tugas.easycook.ui.mealplanning.MealPlanningFragment"-->
-<!--        android:label="@string/title_meal_planning"-->
-<!--        tools:layout="@layout/fragment_meal_planning"-->
+        android:id="@+id/navigation_meal_planning"
+        android:name="android.tugas.easycook.ui.planning.MealPlanningFragment"
+        android:label="Meal Planning"
+        tools:layout="@layout/fragment_meal_planning">
         <action
             android:id="@+id/action_meal_planning_to_home"
             app:destination="@id/navigation_home"

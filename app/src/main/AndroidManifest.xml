@@ -29,6 +29,14 @@
             android:name=".ui.detail.RecipeDetailActivity"
             android:exported="false"
             android:theme="@style/Theme.EasyCook.NoActionBar"/>
+
+        <activity
+            android:name=".ui.planning.AddPlanningActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ui.search.SearchActivity"
+            android:exported="false" />
     </application>
 
 </manifest>

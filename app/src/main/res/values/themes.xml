@@ -18,4 +18,12 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
+
+    <style name="Widget.App.Button.Tonal" parent="Widget.MaterialComponents.Button">
+        <item name="backgroundTint">@color/white</item>
+        <item name="android:textColor">@color/primary_orange</item>
+        <item name="iconTint">@color/primary_orange</item>
+        <item name="strokeColor">@color/primary_orange</item>
+        <item name="strokeWidth">1dp</item>
+    </style>
 </resources>

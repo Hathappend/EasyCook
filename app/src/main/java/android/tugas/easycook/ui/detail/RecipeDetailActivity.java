@@ -1,8 +1,11 @@
 package android.tugas.easycook.ui.detail;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.method.LinkMovementMethod;
 import android.tugas.easycook.databinding.ActivityRecipeDetailBinding;
+import android.view.View;
 import android.widget.Toast;
 import android.text.Html;
 import android.tugas.easycook.data.api.ApiClient;
@@ -30,6 +33,8 @@ public class RecipeDetailActivity extends AppCompatActivity {
     private ApiService apiService;
     private final String API_KEY = "9135788718664371a9de785a0ed83a7d";
     private boolean isDescriptionExpanded = false;
+    private boolean isSelectingRecipe = false;
+    private Recipe currentRecipe;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +45,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
         apiService = ApiClient.getClient().create(ApiService.class);
 
         int recipeId = getIntent().getIntExtra(RECIPE_ID, -1);
+        isSelectingRecipe = getIntent().getBooleanExtra("IS_SELECTING_RECIPE", false);
 
         if (recipeId != -1) {
             fetchRecipeDetails(recipeId);
@@ -67,7 +73,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<Recipe> call, Response<Recipe> response) {
                 if (response.isSuccessful() && response.body() != null) {
-
+                    currentRecipe = response.body();
                     Recipe data = response.body();
 
                     binding.toolbarLayout.setTitle(data.getTitle());
@@ -98,6 +104,19 @@ public class RecipeDetailActivity extends AppCompatActivity {
                     } else {
                         setupTabs(ingredients, new java.util.ArrayList<>());
                     }
+
+                    if (isSelectingRecipe) {
+                        // Mode Memilih: Tampilkan grup tombol planning
+                        binding.fabCheckNutrition.setVisibility(View.GONE);
+                        binding.planningActionLayout.setVisibility(View.VISIBLE);
+                    } else {
+                        // Mode Normal: Tampilkan tombol FAB biasa
+                        binding.fabCheckNutrition.setVisibility(View.VISIBLE);
+                        binding.planningActionLayout.setVisibility(View.GONE);
+                    }
+
+                    setupButtonListeners();
+
                 } else {
                     Toast.makeText(RecipeDetailActivity.this, "Failed to load details", Toast.LENGTH_SHORT).show();
                 }
@@ -108,6 +127,37 @@ public class RecipeDetailActivity extends AppCompatActivity {
                 Toast.makeText(RecipeDetailActivity.this, "Network Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private void openNutritionPage() {
+        Toast.makeText(this, "Membuka halaman cek nutrisi...", Toast.LENGTH_SHORT).show();
+        // TODO: Ganti Toast ini dengan Intent ke NutritionActivity Anda nanti
+        // Intent intent = new Intent(this, NutritionActivity.class);
+        // intent.putExtra("RECIPE_ID", currentRecipe.getId());
+        // startActivity(intent);
+    }
+
+    private void setupButtonListeners() {
+        // Listener untuk tombol FAB default
+        binding.fabCheckNutrition.setOnClickListener(v -> openNutritionPage());
+
+        // Listener untuk tombol di dalam grup planning
+        binding.btnCheckNutritionPlanning.setOnClickListener(v -> openNutritionPage());
+
+        // Listener untuk tombol "Add Planning"
+        binding.btnAddToPlan.setOnClickListener(v -> {
+            selectThisRecipe();
+        });
+    }
+
+    private void selectThisRecipe() {
+        if (currentRecipe != null) {
+            Intent resultIntent = new Intent();
+            resultIntent.putExtra("SELECTED_RECIPE_ID", currentRecipe.getId());
+            resultIntent.putExtra("SELECTED_RECIPE_TITLE", currentRecipe.getTitle());
+            setResult(Activity.RESULT_OK, resultIntent);
+            finish();
+        }
     }
     private void setupExpandableDescription() {
         binding.tvReadMore.setOnClickListener(v -> {

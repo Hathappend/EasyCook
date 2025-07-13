@@ -1,6 +1,8 @@
 package android.tugas.easycook.data.api;
 
 import android.tugas.easycook.data.model.Recipe;
+import android.tugas.easycook.data.response.DayPlan;
+import android.tugas.easycook.data.response.MealPlanResponse;
 import android.tugas.easycook.data.response.RecipeListResponse;
 import android.tugas.easycook.data.response.SearchApiResponse;
 import retrofit2.Call;
@@ -38,5 +40,21 @@ public interface ApiService {
             @Query("addRecipeInformation") boolean addInfo,
             @Query("apiKey") String apiKey,
             @Query("offset") int offset
+    );
+
+    @GET("mealplanner/generate")
+    Call<MealPlanResponse> generateMealPlan(
+            @Query("timeFrame") String timeFrame,
+            @Query("targetCalories") String targetCalories,
+            @Query("diet") String diet,
+            @Query("apiKey") String apiKey
+    );
+
+    @GET("mealplanner/generate")
+    Call<DayPlan> generateDailyPlan(
+            @Query("timeFrame") String timeFrame,
+            @Query("targetCalories") String targetCalories,
+            @Query("diet") String diet,
+            @Query("apiKey") String apiKey
     );
 }

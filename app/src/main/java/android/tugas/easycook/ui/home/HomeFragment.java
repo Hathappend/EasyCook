@@ -97,7 +97,7 @@ public class HomeFragment extends Fragment {
             @Override
             public void onResponse(Call<RecipeListResponse> call, Response<RecipeListResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    recommendedAdapter.updateRecipes(response.body().getRecipes());
+//                    recommendedAdapter.updateRecipes(response.body().getRecipes());
                 } else {
                     Toast.makeText(getContext(), "Failed to load recommended recipes.", Toast.LENGTH_SHORT).show();
                 }
@@ -162,12 +162,12 @@ public class HomeFragment extends Fragment {
                         if (response.isSuccessful() && response.body() != null) {
                             List<Recipe> newRecipes = response.body().getRecipes();
 
-                            popularAdapter.addRecipes(newRecipes);
-
-                            popularAdapter.showFooter(!newRecipes.isEmpty());
+//                            popularAdapter.addRecipes(newRecipes);
+//
+//                            popularAdapter.showFooter(!newRecipes.isEmpty());
                         } else {
                             Toast.makeText(getContext(), "Failed to load popular recipes.", Toast.LENGTH_SHORT).show();
-                            popularAdapter.showFooter(false);
+//                            popularAdapter.showFooter(false);
                         }
                     }
 

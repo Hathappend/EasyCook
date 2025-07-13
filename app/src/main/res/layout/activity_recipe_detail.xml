@@ -191,7 +191,6 @@
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
-    <!-- 4. Tombol Floating "Check Nutrition" -->
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/fab_check_nutrition"
         android:layout_width="wrap_content"
@@ -203,5 +202,39 @@
         app:icon="@drawable/ic_check"
         app:iconTint="@color/white"
         android:backgroundTint="@color/primary_orange"/>
+
+    <LinearLayout
+        android:id="@+id/planning_action_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="bottom"
+        android:padding="16dp"
+        android:visibility="gone"
+        tools:visibility="visible">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_check_nutrition_planning"
+            style="@style/Widget.App.Button.Tonal"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Check Nutrition"
+            android:layout_marginEnd="8dp"
+            app:icon="@drawable/ic_check"
+            app:iconGravity="textStart"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_add_to_plan"
+            style="@style/Widget.MaterialComponents.Button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Add To Planning"
+            android:layout_marginStart="8dp"
+            app:icon="@drawable/ic_meal_planning"
+            app:iconGravity="textStart"/>
+
+    </LinearLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
