@@ -3,8 +3,10 @@ package android.tugas.easycook.ui.home;
 import android.content.Intent;
 import android.os.Bundle;
 import android.tugas.easycook.R;
+import android.tugas.easycook.data.model.Category;
 import android.tugas.easycook.data.model.Recipe;
 import android.tugas.easycook.databinding.FragmentHomeBinding;
+import android.tugas.easycook.ui.category.CategoryAdapter;
 import android.tugas.easycook.ui.detail.RecipeDetailActivity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,6 +24,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.navigation.Navigation;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +38,9 @@ public class HomeFragment extends Fragment {
     private FragmentHomeBinding binding;
     private RecommendedAdapter recommendedAdapter;
     private PopularAdapter popularAdapter;
+    private RecyclerView recyclerViewCategories;
+    private CategoryAdapter categoryAdapter;
+    private List<Category> categoryList;
     private int popularCurrentPage = 0;
     private final int RECIPES_PER_PAGE = 10;
     private final String API_KEY = "9135788718664371a9de785a0ed83a7d";
@@ -54,12 +60,45 @@ public class HomeFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        recyclerViewCategories = view.findViewById(R.id.recycler_view_categories);
+
+        setupRecyclerView();
+
         setupRecommendedRecyclerView();
         fetchRecommendedRecipes();
 
         setupPopularRecyclerView();
         fetchPopularRecipes(popularCurrentPage);
         setupSearchListener();
+    }
+
+    private void setupRecyclerView() {
+        // 1. Siapkan data yang akan ditampilkan
+        prepareCategoryData();
+
+        // 2. Buat instance dari Adapter dan kirimkan data list
+        categoryAdapter = new CategoryAdapter(categoryList);
+
+        // 3. Atur LayoutManager (sudah diatur di XML, tapi ini cara jika lewat kode)
+        // LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+        // recyclerViewCategories.setLayoutManager(layoutManager);
+
+        // 4. Set Adapter ke RecyclerView
+        recyclerViewCategories.setAdapter(categoryAdapter);
+    }
+
+    private void prepareCategoryData() {
+        categoryList = new ArrayList<>();
+        // Tambahkan semua data kategori Anda di sini
+        categoryList.add(new Category("Breakfast", R.drawable.ic_breakfast));
+        categoryList.add(new Category("Salad", R.drawable.ic_salad));
+        categoryList.add(new Category("Main Course", R.drawable.ic_main_course));
+        categoryList.add(new Category("Dessert", R.drawable.ic_dessert));
+        categoryList.add(new Category("Beverages", R.drawable.ic_beverages));
+        categoryList.add(new Category("Side Dish", R.drawable.ic_side_dish));
+        categoryList.add(new Category("Appetizer", R.drawable.ic_appetizer));
+        categoryList.add(new Category("Bread", R.drawable.ic_bread));
+        categoryList.add(new Category("Soup", R.drawable.ic_soup));
     }
 
     private void setupSearchListener() {
