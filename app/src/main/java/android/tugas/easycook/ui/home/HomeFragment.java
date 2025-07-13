@@ -73,17 +73,8 @@ public class HomeFragment extends Fragment {
     }
 
     private void setupRecyclerView() {
-        // 1. Siapkan data yang akan ditampilkan
         prepareCategoryData();
-
-        // 2. Buat instance dari Adapter dan kirimkan data list
         categoryAdapter = new CategoryAdapter(categoryList);
-
-        // 3. Atur LayoutManager (sudah diatur di XML, tapi ini cara jika lewat kode)
-        // LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
-        // recyclerViewCategories.setLayoutManager(layoutManager);
-
-        // 4. Set Adapter ke RecyclerView
         recyclerViewCategories.setAdapter(categoryAdapter);
     }
 
@@ -136,7 +127,7 @@ public class HomeFragment extends Fragment {
             @Override
             public void onResponse(Call<RecipeListResponse> call, Response<RecipeListResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
-//                    recommendedAdapter.updateRecipes(response.body().getRecipes());
+                    recommendedAdapter.updateRecipes(response.body().getRecipes());
                 } else {
                     Toast.makeText(getContext(), "Failed to load recommended recipes.", Toast.LENGTH_SHORT).show();
                 }
@@ -201,12 +192,12 @@ public class HomeFragment extends Fragment {
                         if (response.isSuccessful() && response.body() != null) {
                             List<Recipe> newRecipes = response.body().getRecipes();
 
-//                            popularAdapter.addRecipes(newRecipes);
-//
-//                            popularAdapter.showFooter(!newRecipes.isEmpty());
+                            popularAdapter.addRecipes(newRecipes);
+
+                            popularAdapter.showFooter(!newRecipes.isEmpty());
                         } else {
                             Toast.makeText(getContext(), "Failed to load popular recipes.", Toast.LENGTH_SHORT).show();
-//                            popularAdapter.showFooter(false);
+                            popularAdapter.showFooter(false);
                         }
                     }
 
