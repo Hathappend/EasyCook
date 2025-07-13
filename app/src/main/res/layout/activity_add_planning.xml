@@ -6,78 +6,103 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp"
+    android:background="@color/background_light"
     tools:context=".ui.planning.AddPlanningActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Add Plan Manually"
-        android:textSize="22sp"
-        android:textStyle="bold"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginBottom="24dp"/>
-
-    <com.google.android.material.textfield.TextInputLayout
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+    <!-- 1. AppBarLayout ditambahkan untuk menampung Toolbar -->
+    <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Select a Day"
-        android:layout_marginBottom="16dp">
+        android:background="?attr/colorSurface"
+        app:elevation="4dp">
 
-        <AutoCompleteTextView
-            android:id="@+id/actv_select_day"
+        <!-- 2. Toolbar dengan judul dan tombol kembali -->
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar_add_plan"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:title="Add Plan Manually"
+            app:navigationIcon="@drawable/ic_arrow_back" /> <!-- Pastikan Anda memiliki drawable ini -->
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <!-- 3. Konten dibungkus dalam ScrollView agar tidak terpotong di layar kecil -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="none"/>
-    </com.google.android.material.textfield.TextInputLayout>
+            android:orientation="vertical"
+            android:padding="16dp">
 
-    <com.google.android.material.textfield.TextInputLayout
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Select Meal Time"
-        android:layout_marginBottom="16dp">
+            <!-- TextView judul asli dihapus karena sudah dipindahkan ke Toolbar -->
 
-        <AutoCompleteTextView
-            android:id="@+id/actv_select_meal_time"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="none"/>
-    </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Select a Day"
+                android:layout_marginBottom="16dp">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Select Recipe"/>
+                <AutoCompleteTextView
+                    android:id="@+id/actv_select_day"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="none"/>
+            </com.google.android.material.textfield.TextInputLayout>
 
-    <TextView
-        android:id="@+id/tv_selected_recipe"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="No recipe selected yet"
-        android:padding="12dp"
-        android:background="@drawable/cell_border"
-        android:layout_marginTop="4dp"
-        android:layout_marginBottom="16dp"/>
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Select Meal Time"
+                android:layout_marginBottom="16dp">
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_select_recipe"
-        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Search &amp; Select Recipe"/>
+                <AutoCompleteTextView
+                    android:id="@+id/actv_select_meal_time"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="none"/>
+            </com.google.android.material.textfield.TextInputLayout>
 
-    <View
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_weight="1"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Select Recipe"/>
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_save_manual_plan"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Save Plan"
-        android:paddingVertical="12dp"/>
+            <TextView
+                android:id="@+id/tv_selected_recipe"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="No recipe selected yet"
+                android:padding="12dp"
+                android:background="@drawable/cell_border"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="16dp"/>
 
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_select_recipe"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Search &amp; Select Recipe"/>
+
+            <!-- Spacer untuk mendorong tombol Save ke bawah -->
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_save_manual_plan"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Save Plan"
+                android:paddingVertical="12dp"/>
+
+        </LinearLayout>
+    </ScrollView>
 </LinearLayout>

@@ -37,6 +37,8 @@ public class AddPlanningActivity extends AppCompatActivity {
         binding = ActivityAddPlanningBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        setupToolbar();
+
         setupDropdowns();
 
         binding.btnSelectRecipe.setOnClickListener(v -> {
@@ -47,6 +49,19 @@ public class AddPlanningActivity extends AppCompatActivity {
         });
 
         binding.btnSaveManualPlan.setOnClickListener(v -> savePlan());
+    }
+
+    private void setupToolbar() {
+        setSupportActionBar(binding.toolbarAddPlan);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
     }
 
     private void setupDropdowns() {

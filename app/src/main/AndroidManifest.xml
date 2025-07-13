@@ -32,6 +32,7 @@
 
         <activity
             android:name=".ui.planning.AddPlanningActivity"
+            android:theme="@style/Theme.EasyCook.NoActionBar"
             android:exported="false" />
 
         <activity
